@@ -1,0 +1,8 @@
+- Use Next.js App router
+- Use TypeScript
+- Use functional components
+- Organize all features under app folder: `app/features/products/`, `app/features/cart/`, etc. (not at root level)
+- Keep components small and reusable
+- Every component must have corresponding test file
+- Use Jest + React testing library
+- Keep UI minimal and clean
