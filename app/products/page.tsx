@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { ProductCard } from '@/features/products/ProductCard';
 import { PRODUCTS } from '@/features/products/data';
 import type { Product } from '@/features/products/types';
@@ -11,17 +11,25 @@ export default function ProductsPage() {
   const [showCart, setShowCart] = useState(false);
   const { items, total, addToCart, removeFromCart, updateQuantity, clearCart } = useCart();
 
-  const handleAddToCart = (productId: number) => {
-    const product = PRODUCTS.find((p: Product) => p.id === productId);
+  // Memoize product lookup map for O(1) access
+  const productMap = useMemo(() => 
+    new Map(PRODUCTS.map((p: Product) => [p.id, p])),
+    []
+  );
+
+  // Stable callback - prevents ProductCard re-renders
+  const handleAddToCart = useCallback((productId: number) => {
+    const product = productMap.get(productId);
     if (product) {
       addToCart(product);
     }
-  };
+  }, [addToCart, productMap]);
 
-  const handleClearCart = () => {
+  // Stable callback
+  const handleClearCart = useCallback(() => {
     clearCart();
     setShowCart(false);
-  };
+  }, [clearCart]);
 
   return (
     <main className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
